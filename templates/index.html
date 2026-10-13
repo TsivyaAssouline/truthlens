@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TruthLens | AI Fact Checker</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <header class="navbar">
+        <a class="logo" href="/" aria-label="TruthLens home">
+            <img
+                src="{{ url_for('static', filename='truthlens_logo.png') }}"
+                alt="TruthLens"
+                class="logo-image"
+            >
+        </a>
+
+        <span class="header-label">AI-POWERED FACT CHECKING</span>
+    </header>
+
+    <div class="app-layout">
+
+        <!-- Left sidebar: verification history -->
+        <aside class="history-sidebar">
+            <div class="history-header">
+                <span class="history-title">YOUR HISTORY</span>
+
+                <button
+                    type="button"
+                    id="clear-history"
+                    class="clear-history-button"
+                >
+                    Clear
+                </button>
+            </div>
+
+            <button
+                type="button"
+                id="new-check"
+                class="new-check-button"
+            >
+                <span>＋</span> New verification
+            </button>
+
+            <div id="history-list" class="history-list">
+                <p class="history-empty">
+                    Your verifications will appear here.
+                </p>
+            </div>
+
+            <p class="history-note">
+                Your history is saved in this browser.
+            </p>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main-container">
+
+            <section class="hero">
+                <div class="eyebrow">
+                    <span class="status-dot"></span>
+                    THINK CLEAR. KNOW BETTER.
+                </div>
+
+                <h1>
+                    Verify the truth<br>
+                    before you <span class="gradient-text">believe it.</span>
+                </h1>
+
+                <p class="subtitle">
+                    Question what you see. Discover what the evidence says.
+                    Get AI-powered fact checks backed by real sources.
+                </p>
+            </section>
+
+            <!-- Verification form -->
+            <section class="checker-card">
+                <form id="check-form">
+                    <label for="claim">WHAT DO YOU WANT TO VERIFY?</label>
+
+                    <textarea
+                        id="claim"
+                        name="claim"
+                        rows="4"
+                        placeholder="Type a claim, news headline, or something you read online..."
+                        required
+                    ></textarea>
+
+                    <div class="form-footer">
+                        <span class="input-hint">
+                            ✦ &nbsp; Evidence-based analysis
+                        </span>
+
+                        <button type="submit" id="check-button">
+                            Verify claim <span>→</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <p
+                id="error-message"
+                class="error-message"
+                role="alert"
+                hidden
+            ></p>
+
+            <!-- Verification results -->
+            <section id="result" class="result-card" hidden>
+                <div class="result-heading">
+                    <span class="section-label">ANALYSIS REPORT</span>
+                    <span class="result-symbol">✦</span>
+                </div>
+
+                <h2>Your verification result</h2>
+
+                <div class="claim-box">
+                    <span class="field-label">CLAIM</span>
+                    <p id="result-claim"></p>
+                </div>
+
+                <div class="verdict-box">
+                    <span class="field-label">VERDICT · GEMINI</span>
+                    <p id="result-status"></p>
+                    <p id="result-explanation"></p>
+                </div>
+
+                <!-- JevModel second opinion -->
+                <div class="jev-box" id="jev-result" hidden>
+                    <div class="jev-heading">
+                        <span class="field-label">
+                            SECOND OPINION · JEVMODEL
+                        </span>
+                        <span class="jev-badge">AI ANALYSIS</span>
+                    </div>
+
+                    <div class="confidence-row">
+                        <span>Model confidence</span>
+                        <strong id="jev-confidence">—</strong>
+                    </div>
+
+                    <div class="probability-item">
+                        <div class="probability-label">
+                            <span>Likely true</span>
+                            <strong id="jev-true-value">—</strong>
+                        </div>
+
+                        <div class="probability-track">
+                            <div
+                                class="probability-fill true-fill"
+                                id="jev-true-bar"
+                            ></div>
+                        </div>
+                    </div>
+
+                    <div class="probability-item">
+                        <div class="probability-label">
+                            <span>Likely false</span>
+                            <strong id="jev-false-value">—</strong>
+                        </div>
+
+                        <div class="probability-track">
+                            <div
+                                class="probability-fill false-fill"
+                                id="jev-false-bar"
+                            ></div>
+                        </div>
+                    </div>
+
+                    <div class="probability-item">
+                        <div class="probability-label">
+                            <span>Uncertain</span>
+                            <strong id="jev-uncertain-value">—</strong>
+                        </div>
+
+                        <div class="probability-track">
+                            <div
+                                class="probability-fill uncertain-fill"
+                                id="jev-uncertain-bar"
+                            ></div>
+                        </div>
+                    </div>
+
+                    <p class="jev-note">
+                        These percentages are model estimates, not guarantees of truth.
+                    </p>
+                </div>
+
+                <!-- Sources -->
+                <div class="sources-section">
+                    <h3>Sources &amp; evidence</h3>
+
+                    <p class="sources-description">
+                        Explore the sources used in this analysis.
+                    </p>
+
+                    <ul id="sources-list"></ul>
+                </div>
+            </section>
+
+            <section class="trust-note">
+                <span>✧</span>
+                <p>Don't just scroll. Question. Verify. Understand.</p>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Clear history confirmation modal -->
+    <div
+        id="clear-history-modal"
+        class="modal-overlay"
+        hidden
+        aria-hidden="true"
+    >
+        <div
+            class="confirmation-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="clear-modal-title"
+            aria-describedby="clear-modal-description"
+            tabindex="-1"
+        >
+            <div class="modal-icon">✦</div>
+
+            <h2 id="clear-modal-title">Clear your history?</h2>
+
+            <p id="clear-modal-description">
+                This will permanently remove all your saved verifications
+                from this browser. This action cannot be undone.
+            </p>
+
+            <div class="modal-actions">
+                <button
+                    type="button"
+                    id="cancel-clear-history"
+                    class="modal-cancel-button"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    id="confirm-clear-history"
+                    class="modal-confirm-button"
+                >
+                    Clear history
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>TruthLens · AI-powered fact checking</p>
+        <p>Think critically. Believe responsibly.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
+
