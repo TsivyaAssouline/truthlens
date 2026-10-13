@@ -131,6 +131,12 @@ Open your browser and navigate to:
 
 http://127.0.0.1:5000
 
+## 🎬 Demo
+
+Watch TruthLens in action:
+
+[▶️ Watch the TruthLens demo](https://drive.google.com/file/d/1zZllj_xFRBNtqAYirveAii8Pbd4YjwPV/view?usp=sharing)
+
 
 ## 🔐 Security
 
