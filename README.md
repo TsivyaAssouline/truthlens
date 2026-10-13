@@ -48,7 +48,7 @@ TruthLens is an assistance tool, not a guarantee of truth. Results depend on the
 
 ## 🏗️ Project Structure
 
-
+```text
 ai-fact-checker/
 ├── app/
 │   ├── main.py
@@ -59,12 +59,14 @@ ai-fact-checker/
 │   └── truthlens_logo.png
 ├── templates/
 │   └── index.html
+├── .env
 ├── .gitignore
-├── web_app.py
+├── README.md
 ├── test_gemini.py
 ├── test_jev.py
 ├── test_tavily.py
-└── README.md
+└── web_app.py
+```
 
 
 The `.env` file is intentionally excluded from version control because it contains API credentials.
